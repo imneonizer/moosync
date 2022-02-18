@@ -1,3 +1,3 @@
 ### Moosync
 
-A GPU scheduling and colloboration tool.
+A GPU scheduling and collaboration tool.
