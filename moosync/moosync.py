@@ -33,12 +33,12 @@ class MooSync:
             except ProcessLookupError: pass
     
     
-    def start_background_sync(self, gpus):
+    def start_background_sync(self):
         self.stop_background_sync()
         
         script_path = join(dirname(realpath(__file__)), self.daemon_script) 
         with open("/tmp/moosync_daemon.log", "wb") as null:
-            cmd = f"{sys.executable} {script_path} {gpus.strip()}"
+            cmd = f"{sys.executable} {script_path}"
             proc = sp.Popen(cmd, shell=True, stdout=null, stderr=null, preexec_fn=os.setsid)
     
     def to_str_format(self, gpus):
@@ -56,7 +56,14 @@ class MooSync:
         
         gpus = args.gpus.strip().lower()
         
-        if  gpus == "all":
+        if "clear" in gpus:
+            if ":" in gpus:
+                gpus = [int(x) for x in gpus.split(":")[0].split(",")]
+                # TODO: mark as clear
+            
+            return None
+        
+        elif  gpus == "all":
             # list all gpus
             # moosync -g all
             gpus = gpustats.all_gpus
@@ -66,7 +73,7 @@ class MooSync:
             # moosync -g 0,1:free.50
             # moosync -g *:free.50
             
-            thresh = 50
+            thresh = 50 # 0-100
             if "." in gpus:
                 thresh = int(gpus.split(".")[1])
             
@@ -92,33 +99,24 @@ class MooSync:
         gpus = self.to_str_format(gpus)
         
         # start background sync process if not already
-        self.start_background_sync(gpus)
-        return gpus
-    
-    
-    def get_token(self, username=None, password=None, api=None):
-        if username and password and api:
-            # get token from api
-            return "token"
-        
-        # get token from local storage
-        return self.read_config().get('token')
-    
-    
-    def verify_token(self, token):
-        return True
-    
+        self.start_background_sync()
+        return gpus    
+
 
     def read_config(self):
         if os.path.exists(self.config_path):
             with open(self.config_path, "r") as f:
                 return json.loads(f.read())
         raise RuntimeError(f"config file '{self.config_path}' not found, please login")
+
     
+    def get_username_from_token(self, token):
+        return "dummy-user"
+
     
-    def login(self, username, password, api, serial):
-        token = self.get_token(username, password, api)
-        config = {"token": token, 'serial': serial, 'host': socket.gethostname(), 'api': api}
+    def login(self, token, api, serial):
+        username = self.get_username_from_token(token)
+        config = {"username": username, "token": token, 'serial': serial, 'host': socket.gethostname(), 'api': api}
         
         with open(self.config_path, "w") as f:
             f.write(json.dumps(config))
