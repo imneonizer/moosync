@@ -43,7 +43,7 @@ moosync -t <your-token> -a http://192.168.0.145:5000
 - To claim all GPUs which are atleast 60% free (wait until they become available)
 
   ````sh
-  moosync -g *:free.45
+  moosync -g *:free.60
   ````
 
 - To clear all GPUs (mark them as unoccupied in the dashboard)
