@@ -20,13 +20,15 @@ A GPU scheduling and collaboration tool.
 
 Users can get any GPU if they have enough memory available, once selected these GPUs are marked as claimed in the dashboard. Users need to sign up and create profile and then they can authenticate to the server using below command:
 
-````
+````sh
 # login to default server
 moosync -t <your-token>
 
 # login to a specific server
 moosync -t <your-token> -a http://192.168.0.145:5000
 ````
+
+A simple technique to use moosync is `export CUDA_VISIBLE_DEVICES=$(moosync -g 0,1,2)`
 
 - To claim GPUs (return immediately even if they are occupied)
 
