@@ -34,7 +34,7 @@ moosync -t <your-token> -a http://192.168.0.145:5000
   moosync -g 0,1,2
   ````
 
-- Get claim specific GPUs only if they are at least 45% free (wait until they become available)
+- To claim specific GPUs only if they are at least 45% free (wait until they become available)
 
   ````sh
   moosync -g 0,1,2:free.45
